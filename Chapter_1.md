@@ -1,4 +1,4 @@
-# 搭建以太坊windows环境
+# 搭建以太坊智能合约 windows环境
 
 ## 安装Truffle
 
