@@ -26,7 +26,7 @@
 >![](./image/Chapter_1/1.png)
 
 ### 运行您的truffle 应用
-> 需要使用一个truffle 的客户端,这里推荐大家使用Ganache
+> 需要使用一个以太坊的客户端,这里推荐大家使用Ganache
 >http://truffleframework.com/ganache/
 >
 > 安装以后运行起来,其中这些ETH账户都是虚拟的。
