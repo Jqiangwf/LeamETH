@@ -62,5 +62,7 @@
 >
 > 注意: 如果The stored value is: 不是5 请在 src/utils/getWeb3.js 中找到第24行正确配置您的ETH 客户端地址
 >
-> 关于windows 环境搭建就到这里,下一章将编写智能合约获取客户端里的所有ETH账户，完成转账等功能。源代码在Chapter_1文件夹下面
+> 关于windows 环境搭建就到这里,下一章将编写智能合约获取客户端里的所有ETH账户，完成转账等功能。
+>源代码在Chapter_1文件夹下面,下载后 请使用npm i 安装node model
+>
 > truffle 官方网站 http://truffleframework.com/
