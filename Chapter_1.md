@@ -66,3 +66,5 @@
 >源代码在Chapter_1文件夹下面,下载后 请使用npm i 安装node model
 >
 > truffle 官方网站 http://truffleframework.com/
+>
+>[下一章](./Chapter_2.md)
