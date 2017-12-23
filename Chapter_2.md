@@ -1,5 +1,9 @@
 # 完成您的第一个智能合约编写
 
+## 需要了解的知识
+
+> ETH 账户分为外部账户和合约账户，外部账户为ETH的公共账户，合约账户为当前智能合约的账户，他们的关系在部署的合约里是一一对应的，在下面代码里将展示创建合约账户，设置自己的初始ICO代币，读取外部账户，读取ETH外部账户的数量
+
 ## 项目结构说明
 
 >contracts 目录为您自己编写的智能合约
@@ -13,6 +17,7 @@
 >在contracts 文件夹下面新建文件MetaCoin.sol与ConvertLib.sol
 >
 > MetaCoin.sol 代码如下:
+
 ```pragma solidity ^0.4.0;
 import "./ConvertLib.sol";
 
@@ -44,7 +49,9 @@ contract MetaCoin {
 	}
 }
 ```
+
 > ConvertLib.sol 代码如下:
+
 ```
 pragma solidity ^0.4.0;
 
@@ -69,6 +76,12 @@ module.exports = function(deployer) {
 };
 
 ```
+
 > 运行命令 truffle complie
 >
 > 运行命令 truffle migrate
+
+## 编写javascript 代码实现对ETH账户的管理
+
+> 打开src/App.js 文件,替换以下代码:
+
