@@ -16,6 +16,8 @@
 
 >在contracts 文件夹下面新建文件MetaCoin.sol与ConvertLib.sol
 >
+> MataCoin 实现的功能: 映射代币账户，初始化机构账户10000个代币，发送代币从机构到其他账户
+>
 > MetaCoin.sol 代码如下:
 
 ```pragma solidity ^0.4.0;
@@ -27,6 +29,7 @@ import "./ConvertLib.sol";
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
 contract MetaCoin {
+	//将以太坊账户映射到代币账户
 	mapping (address => uint) balances;
 
 	function MetaCoin() public {
@@ -81,7 +84,148 @@ module.exports = function(deployer) {
 >
 > 运行命令 truffle migrate
 
-## 编写javascript 代码实现对ETH账户的管理
+## 编写javascript 代码实现对代币账户的管理
 
+> App.js 实现的功能:获取账户余额,对非机构账户的账户转入代币
+>
 > 打开src/App.js 文件,替换以下代码:
+```
+import React, { Component } from 'react'
+import MetaCoinContract from '../build/contracts/MetaCoin.json'
+import getWeb3 from './utils/getWeb3'
 
+import './css/oswald.css'
+import './css/open-sans.css'
+import './css/pure-min.css'
+import './App.css'
+
+class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      web3: null,
+      accounts: [],
+      coinbaseAccount : ''
+    }
+
+    this._getAccountBalance = this._getAccountBalance.bind(this)
+   
+  }
+
+  componentWillMount() {
+
+    getWeb3
+      .then(results => {
+        this.setState({
+          web3: results.web3
+        })
+        this.instantiateContract()
+      })
+      .catch(() => {
+        console.log('Error finding web3.')
+      })
+  }
+
+  /**
+   * 初始化您的智能合约
+   */
+  instantiateContract() {
+    const contract = require('truffle-contract')
+    const metaCoin = contract(MetaCoinContract)
+    metaCoin.setProvider(this.state.web3.currentProvider)
+    metaCoin.deployed().then((instance) => {
+      this.setState({metaCoin:instance})
+
+      this.refreshBalances()
+    })
+
+  }
+
+  /**
+   * 刷新账户余额
+   */
+  refreshBalances(){
+    this.state.web3.eth.getAccounts((error, accounts) => {
+        var accountsAndBalances = accounts.map(account=>{
+          return this._getAccountBalance(account).then((balance) => { return { account, balance } })
+        })
+        Promise.all(accountsAndBalances).then((accountsAndBalances) => {
+          this.setState({accounts: accountsAndBalances, coinbaseAccount: accountsAndBalances[0]})
+        })
+    })
+  }
+
+  /**
+   * 获取账户余额
+   * @param {*账户} account 
+   */
+  _getAccountBalance (account) {
+    var meta = this.state.metaCoin
+    return new Promise((resolve, reject) => {
+      meta.getBalance.call(account, {from: account}).then(function (value) {
+        resolve({ account: value.valueOf() })
+      }).catch(function (e) {
+        console.log(e)
+        reject()
+      })
+    })
+  }
+
+  handleSendMeta(e){
+    e.preventDefault()
+    console.log(`Recipient Address: ${this.recipientAddressInput.value}`)
+    console.log(`send amount: ${this.sendAmountInput.value}`)
+
+
+    this.state.metaCoin.sendCoin(this.recipientAddressInput.value.trim(),this.sendAmountInput.value.trim(), {from: this.state.coinbaseAccount.account}).then(function() {
+      this.refreshBalances()
+      console.log('SENT')
+    }.bind(this)).catch(function(e) {
+      console.log(e);
+    });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <nav className="navbar pure-menu pure-menu-horizontal">
+          <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
+        </nav>
+        <main className="container">
+          <div className="pure-g">
+            <div className="pure-u-1-1">
+              <h1>您的第一个智能合约项目</h1>
+              {this.state.accounts.map(({account, balance}) =>
+                <p>IOC代币账户{account}   ICO代币账户余额:{balance.account}</p>
+                )}
+            </div>
+          </div>
+          <form>
+              <label>接收的账户</label>
+              <input id="recipient_address" type="text"  ref={(i)=>{ if(i) { this.recipientAddressInput = i}}} ></input>
+              <label>接受账户的金额</label>
+              <input id='send_amount' type="text" ref={(i) => { if(i) { this.sendAmountInput = i}}}></input>
+              <button onClick={this.handleSendMeta.bind(this)}>发送ico代币</button>
+            </form>
+        </main>
+        
+      </div>
+    );
+  }
+}
+
+export default App
+
+```
+
+> 完成后可以看到如下截图:
+>![](./image/Chapter_2/1.png)
+>
+> 输入需要转入的地址，输入代币，就可以对相应的账户转入代币，注意:第一个账户是机构账户,没有完成转入转出地址的校验。
+>
+> 源代码在Chapter_2文件夹下面,下载后 请使用npm i 安装node model
+>
+> truffle 官方网站 http://truffleframework.com/
+>
+>[下一章](./Chapter_2.md)

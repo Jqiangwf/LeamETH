@@ -7,6 +7,13 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+/**
+* @author   作者:  qugang
+* @E-mail   邮箱: qgass@163.com
+* @date     创建时间：2017/12/23
+* 类说明     读取代币账户实现转账
+*/
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -14,7 +21,7 @@ class App extends Component {
     this.state = {
       web3: null,
       accounts: [],
-      coinbase: ''
+      coinbaseAccount : ''
     }
 
     this._getAccountBalance = this._getAccountBalance.bind(this)
@@ -22,16 +29,12 @@ class App extends Component {
   }
 
   componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
 
     getWeb3
       .then(results => {
         this.setState({
           web3: results.web3
         })
-
-        // Instantiate contract once web3 provided.
         this.instantiateContract()
       })
       .catch(() => {
@@ -39,51 +42,43 @@ class App extends Component {
       })
   }
 
+  /**
+   * 初始化您的智能合约
+   */
   instantiateContract() {
-    /*
-     * SMART CONTRACT EXAMPLE
-     *
-     * Normally these functions would be called in the context of a
-     * state management library, but for convenience I've placed them here.
-     */
-
     const contract = require('truffle-contract')
     const metaCoin = contract(MetaCoinContract)
     metaCoin.setProvider(this.state.web3.currentProvider)
+    metaCoin.deployed().then((instance) => {
+      this.setState({metaCoin:instance})
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
+      this.refreshBalances()
+    })
 
-    // Get accounts.
+  }
+
+  /**
+   * 刷新账户余额
+   */
+  refreshBalances(){
     this.state.web3.eth.getAccounts((error, accounts) => {
-
-      metaCoin.deployed().then((instance) => {
-
-        this.setState({metaCoin:instance})
-
-
-
-
         var accountsAndBalances = accounts.map(account=>{
-
           return this._getAccountBalance(account).then((balance) => { return { account, balance } })
         })
-
         Promise.all(accountsAndBalances).then((accountsAndBalances) => {
           this.setState({accounts: accountsAndBalances, coinbaseAccount: accountsAndBalances[0]})
-          console.log(this.state.accounts)
         })
-
-      })
     })
   }
 
-
+  /**
+   * 获取账户余额
+   * @param {*账户} account 
+   */
   _getAccountBalance (account) {
     var meta = this.state.metaCoin
-    console.log(meta)
     return new Promise((resolve, reject) => {
       meta.getBalance.call(account, {from: account}).then(function (value) {
-        console.log(value.valueOf())
         resolve({ account: value.valueOf() })
       }).catch(function (e) {
         console.log(e)
@@ -92,22 +87,44 @@ class App extends Component {
     })
   }
 
+  handleSendMeta(e){
+    e.preventDefault()
+    console.log(`Recipient Address: ${this.recipientAddressInput.value}`)
+    console.log(`send amount: ${this.sendAmountInput.value}`)
+
+
+    this.state.metaCoin.sendCoin(this.recipientAddressInput.value.trim(),this.sendAmountInput.value.trim(), {from: this.state.coinbaseAccount.account}).then(function() {
+      this.refreshBalances()
+      console.log('SENT')
+    }.bind(this)).catch(function(e) {
+      console.log(e);
+    });
+  }
+
   render() {
     return (
       <div className="App">
         <nav className="navbar pure-menu pure-menu-horizontal">
           <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
         </nav>
-
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
               <h1>您的第一个智能合约项目</h1>
               {this.state.accounts.map(({account, balance}) =>
-                <p>以太坊账户{account}:账户余额:{balance.account / 1000000000000000000}</p>)}
+                <p>IOC代币账户{account}   ICO代币账户余额:{balance.account}</p>
+                )}
             </div>
           </div>
+          <form>
+              <label>接收的账户</label>
+              <input id="recipient_address" type="text"  ref={(i)=>{ if(i) { this.recipientAddressInput = i}}} ></input>
+              <label>接受账户的金额</label>
+              <input id='send_amount' type="text" ref={(i) => { if(i) { this.sendAmountInput = i}}}></input>
+              <button onClick={this.handleSendMeta.bind(this)}>发送ico代币</button>
+            </form>
         </main>
+        
       </div>
     );
   }
