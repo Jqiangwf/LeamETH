@@ -2,6 +2,8 @@
 
 ## 目录
 
->[第一章](./Chapter_1.md)
+>[第一章 搭建以太坊智能合约 windows环境](./Chapter_1.md)
 >
->[第二章](./Chapter_2.md)
+>[第二章 完成您的第一个智能合约编写](./Chapter_2.md)
+>
+>[第三章 编写投票合约](./Chapter_3.md)
