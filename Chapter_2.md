@@ -228,4 +228,4 @@ export default App
 >
 > truffle 官方网站 http://truffleframework.com/
 >
->[下一章](./Chapter_2.md)
+>[下一章](./Chapter_3.md)
