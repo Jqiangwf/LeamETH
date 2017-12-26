@@ -266,4 +266,4 @@ module.exports = function(deployer) {
 > 选择地址就可以投票了，请注意查看日志出现：Error: VM Exception while processing transaction: revert
 说明这个账户已经投过票了。
 >
->[下一章](./Chapter_3.md)
+>[下一章](./Chapter_4.md)
