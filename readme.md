@@ -8,4 +8,6 @@
 >
 >[第三章 编写官方列子投票合约的实现](./Chapter_3.md)
 >
->[第三章 编写一个符合ERC20代币DEMO](./Chapter_4.md)
+>[第四章 编写一个符合ERC20代币DEMO](./Chapter_4.md)
+>
+>[第五章 将您的智能合约部署到ETH测试网络](./Chapter_5.md)
