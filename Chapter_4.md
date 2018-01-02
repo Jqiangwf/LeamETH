@@ -62,8 +62,8 @@ import "./EIP20Interface.sol";
 contract EIP20 is EIP20Interface {
     uint256 constant MAX_UINT256 = 2**256 - 1; //token最大上限
     string public name;                   //token名称
-    uint8 public decimals;                //token的发行量
-    string public symbol;                 //token符号
+    uint8 public decimals;                //token的精度
+    string public symbol;                 //token符号
 
 
     mapping (address => uint256) balances; //token的账户
